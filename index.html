@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Κουίζ Θρησκευτικών – Β΄ Γυμνασίου</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #d4a024;
+  --gold-light: #f5e6b8;
+  --ink: #1a1a2e;
+  --parchment: #faf6ed;
+  --parchment-dark: #f0e8d4;
+  --correct: #2d8a4e;
+  --correct-bg: #e8f5ec;
+  --wrong: #c0392b;
+  --wrong-bg: #fde8e8;
+  --accent: #6c3a8a;
+  --accent-light: #f3eaf8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Literata', Georgia, serif;
+  background: var(--parchment);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle parchment texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(212,160,36,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(108,58,138,0.04) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* ---- HEADER ---- */
+.header {
+  text-align: center;
+  padding: 40px 20px 30px;
+  margin-bottom: 8px;
+}
+
+.header-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.header .subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* ---- PROGRESS BAR ---- */
+.progress-wrap {
+  background: var(--parchment-dark);
+  border-radius: 20px;
+  height: 10px;
+  margin: 0 0 28px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  border-radius: 20px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 0%;
+}
+
+.progress-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* ---- NAME INPUT ---- */
+.name-screen {
+  text-align: center;
+  padding: 60px 20px;
+  animation: fadeUp 0.5s ease;
+}
+
+.name-screen h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.name-input {
+  font-family: 'Literata', serif;
+  font-size: 18px;
+  padding: 14px 20px;
+  border: 2px solid var(--gold-light);
+  border-radius: 12px;
+  background: #fff;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.name-input:focus {
+  border-color: var(--gold);
+}
+
+.start-btn {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 40px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+/* ---- QUESTION CARD ---- */
+.question-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  animation: fadeUp 0.4s ease;
+  transition: all 0.3s;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.q-number {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.q-category {
+  display: inline-block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--accent-light);
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.q-text {
+  font-size: 17px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+/* ---- OPTIONS ---- */
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Literata', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 14px 16px;
+  background: var(--parchment);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  color: var(--ink);
+}
+
+.option-btn:hover:not(.disabled) {
+  border-color: var(--gold);
+  background: var(--gold-light);
+  transform: translateX(4px);
+}
+
+.option-btn .letter {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.option-btn.selected { border-color: var(--gold); background: var(--gold-light); }
+.option-btn.selected .letter { background: var(--gold); color: #fff; }
+
+.option-btn.correct { border-color: var(--correct); background: var(--correct-bg); }
+.option-btn.correct .letter { background: var(--correct); color: #fff; }
+
+.option-btn.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+.option-btn.wrong .letter { background: var(--wrong); color: #fff; }
+
+.option-btn.disabled { pointer-events: none; opacity: 0.7; }
+.option-btn.disabled.correct { opacity: 1; }
+
+/* ---- EXPLANATION ---- */
+.explanation {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+  animation: fadeUp 0.3s ease;
+}
+
+.explanation.correct-exp {
+  background: var(--correct-bg);
+  border-left: 4px solid var(--correct);
+}
+
+.explanation.wrong-exp {
+  background: var(--wrong-bg);
+  border-left: 4px solid var(--wrong);
+}
+
+.explanation strong {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 4px;
+}
+
+/* ---- NEXT BUTTON ---- */
+.next-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: fadeUp 0.3s ease;
+}
+
+.next-btn:hover { background: #2a2a4e; transform: translateY(-1px); }
+
+/* ---- RESULTS SCREEN ---- */
+.results {
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeUp 0.5s ease;
+}
+
+.results .score-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid var(--gold);
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(212,160,36,0.2);
+}
+
+.results .score-num {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 42px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.results .score-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.results h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.results .message {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.results .grade {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 8px 24px;
+  border-radius: 30px;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.review-section {
+  text-align: left;
+  margin-top: 30px;
+}
+
+.review-section h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold-light);
+}
+
+.review-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.review-item .ri-q {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.review-item .ri-answer {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.review-item .ri-answer .ri-correct { color: var(--correct); font-weight: 700; }
+.review-item .ri-answer .ri-wrong { color: var(--wrong); text-decoration: line-through; }
+
+.retry-btn {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 36px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
+.hidden { display: none !important; }
+
+/* Confetti */
+.confetti-piece {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+@media (max-width: 500px) {
+  .header h1 { font-size: 22px; }
+  .q-text { font-size: 15px; }
+  .option-btn { font-size: 14px; padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-icon">📜</div>
+    <h1>Τετραμηνιαίο Κουίζ Θρησκευτικών</h1>
+    <div class="subtitle">Β΄ Γυμνασίου — Κλήρος, Μοναχισμός, Ελληνισμός & Χριστιανισμός</div>
+  </div>
+
+  <!-- NAME SCREEN -->
+  <div id="nameScreen" class="name-screen">
+    <h2>Πώς σε λένε; ✏️</h2>
+    <input type="text" class="name-input" id="nameInput" placeholder="Γράψε το όνομά σου..." autofocus>
+    <br>
+    <button class="start-btn" onclick="startQuiz()">Ξεκίνα το Κουίζ →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quizScreen" class="hidden">
+    <div class="progress-text" id="progressText"></div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="questionArea"></div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="resultsScreen" class="hidden"></div>
+</div>
+
+<script>
+const questions = [
+  // --- ΚΛΗΡΟΣ & ΛΑΟΣ ---
+  {
+    cat: "Κλήρος & Λαός",
+    q: "Ο επίσκοπος της κάθε τοπικής Εκκλησίας εκλεγόταν από:",
+    opts: ["Τον αυτοκράτορα", "Τον κλήρο", "Τον λαό (τους λαϊκούς)", "Τον Πάπα της Ρώμης"],
+    correct: 1,
+    explain: "Σύμφωνα με το κείμενο, «ο επίσκοπος εκλεγόταν από τον κλήρο» — δηλαδή από τους πρεσβυτέρους και τους διακόνους, όχι από τους λαϊκούς."
+  },
+  {
+    cat: "Κλήρος & Λαός",
+    q: "Ποιες ήταν οι πέντε πόλεις που έγιναν έδρες πατριαρχών;",
+    opts: [
+      "Ρώμη, Αθήνα, Αλεξάνδρεια, Αντιόχεια, Ιεροσόλυμα",
+      "Ρώμη, Κωνσταντινούπολη, Αλεξάνδρεια, Αντιόχεια, Ιεροσόλυμα",
+      "Ρώμη, Κωνσταντινούπολη, Καισάρεια, Αντιόχεια, Έφεσος",
+      "Ρώμη, Κωνσταντινούπολη, Αλεξάνδρεια, Έδεσσα, Ιεροσόλυμα"
+    ],
+    correct: 1,
+    explain: "Οι πόλεις που αναφέρονται στο κείμενο ως μεγάλα κέντρα Χριστιανισμού και έδρες πατριαρχών (5ος αι.) είναι: Ρώμη, Κωνσταντινούπολη, Αλεξάνδρεια, Αντιόχεια και Ιεροσόλυμα."
+  },
+  {
+    cat: "Κλήρος & Λαός",
+    q: "Σύμφωνα με τον Κάλλιστο Ware, ο επίσκοπος είναι:",
+    opts: [
+      "Κάποιος που βρίσκεται πάνω από την Εκκλησία",
+      "Ο πατέρας του ποιμνίου, μέσα στην Εκκλησία — σε οργανική ενότητα με τον λαό",
+      "Ανεξάρτητος από τον λαό",
+      "Μόνο λειτουργός χωρίς εξουσία"
+    ],
+    correct: 1,
+    explain: "Ο Ware γράφει ότι ο επίσκοπος «δεν είναι κάποιος τύραννος, αλλά ο πατέρας του ποιμνίου του» και ότι «επίσκοπος και λαός αποτελούν μια οργανική ενότητα». Κανείς δεν μπορεί να νοηθεί χωρίς τον άλλο."
+  },
+  {
+    cat: "Κλήρος & Λαός",
+    q: "Οι μητροπολίτες εμφανίστηκαν ως τίτλος:",
+    opts: [
+      "Τον 1ο αιώνα μ.Χ.",
+      "Τον 5ο αιώνα μ.Χ.",
+      "Τον 3ο αιώνα μ.Χ.",
+      "Τον 7ο αιώνα μ.Χ."
+    ],
+    correct: 2,
+    explain: "Το κείμενο αναφέρει: «Από τον 3ο αι. μ.Χ., οι επίσκοποι των μεγαλύτερων πόλεων ονομάστηκαν μητροπολίτες». Οι πατριάρχες ήρθαν αργότερα, τον 5ο αιώνα."
+  },
+  // --- ΜΟΝΑΧΙΣΜΟΣ ---
+  {
+    cat: "Μοναχισμός",
+    q: "Γιατί γεννήθηκε ο μοναχισμός τον 4ο αιώνα;",
+    opts: [
+      "Επειδή ο Χριστιανισμός απαγορεύτηκε",
+      "Ως κίνημα διαμαρτυρίας προς το κοσμικό φρόνημα που εισέβαλε στην Εκκλησία μετά την επίσημη αναγνώρισή της",
+      "Επειδή οι μοναχοί ήθελαν πολιτική εξουσία",
+      "Για οικονομικούς λόγους"
+    ],
+    correct: 1,
+    explain: "Μετά την αναγνώριση του Χριστιανισμού, μεγάλες ομάδες βαπτίστηκαν χωρίς να ζουν αληθινά χριστιανικά. Ο μοναχισμός γεννήθηκε «ως κίνημα διαμαρτυρίας προς το κοσμικό φρόνημα» που εισέβαλε στην Εκκλησία."
+  },
+  {
+    cat: "Μοναχισμός",
+    q: "Ποιος ίδρυσε τα πρώτα μοναστήρια στην Αίγυπτο;",
+    opts: ["Ο Μέγας Βασίλειος", "Ο Γρηγόριος ο Θεολόγος", "Ο Παχώμιος", "Ο Εφραίμ ο Σύρος"],
+    correct: 2,
+    explain: "«Ο Παχώμιος ήταν ο πρώτος που ίδρυσε στην Αίγυπτο μοναστήρια, όπως τα γνωρίζουμε σήμερα.» Ο Μέγας Βασίλειος θεμελίωσε αργότερα το κοινοβιακό σύστημα."
+  },
+  {
+    cat: "Μοναχισμός",
+    q: "Ποιες ήταν οι τρεις προϋποθέσεις της μοναχικής ζωής κατά τον Μ. Βασίλειο;",
+    opts: [
+      "Πλούτος, δόξα, εξουσία",
+      "Εγκράτεια, υπακοή, ακτημοσύνη",
+      "Προσευχή, νηστεία, σιωπή",
+      "Μόρφωση, ταξίδια, κήρυγμα"
+    ],
+    correct: 1,
+    explain: "Ο Μ. Βασίλειος «όρισε ως προϋποθέσεις της μοναχικής ζωής την εγκράτεια, την υπακοή και την ακτημοσύνη». Αυτές αποτελούν τη βάση του κοινοβιακού μοναχισμού."
+  },
+  {
+    cat: "Μοναχισμός",
+    q: "Τι έκανε ο Εφραίμ ο Σύρος όταν έπεσε πείνα στην Έδεσσα;",
+    opts: [
+      "Έφυγε σε άλλη πόλη",
+      "Πήρε χρήματα από τους πλούσιους, έστησε 300 κλίνες και φρόντισε τους πεινασμένους",
+      "Κήρυξε μόνο στους πλούσιους",
+      "Ζήτησε βοήθεια από τον αυτοκράτορα"
+    ],
+    correct: 1,
+    explain: "Ο Εφραίμ πήγε στους πλούσιους, κέρδισε την εμπιστοσύνη τους, πήρε χρήματα, «έστησε περίπου τριακόσιες κλίνες» και νοσοκόμησε τους πεινασμένους μέχρι να περάσει η πείνα."
+  },
+  {
+    cat: "Μοναχισμός",
+    q: "Ο Νικόδημος ο Αγιορείτης γεννήθηκε στη/στο:",
+    opts: ["Κωνσταντινούπολη", "Άγιο Όρος", "Νάξο", "Σμύρνη"],
+    correct: 2,
+    explain: "«Γεννήθηκε στη Νάξο και σπούδασε θεολογία στη Σμύρνη.» Μόνασε στο Άγιο Όρος για 35 περίπου χρόνια."
+  },
+  // --- ΕΛΛΗΝΙΣΜΟΣ & ΧΡΙΣΤΙΑΝΙΣΜΟΣ ---
+  {
+    cat: "Ελληνισμός & Χριστιανισμός",
+    q: "Η Καινή Διαθήκη γράφτηκε σε ποια γλώσσα;",
+    opts: [
+      "Αραμαϊκή",
+      "Λατινικά",
+      "Κοινή Ελληνιστική (Αλεξανδρινή Κοινή)",
+      "Κλασική Αττική"
+    ],
+    correct: 2,
+    explain: "Αν και ο Χριστός κήρυξε στα αραμαϊκά, οι Απόστολοι χρησιμοποίησαν την «Ελληνιστική Κοινή ή Αλεξανδρινή Κοινή» — τη γλώσσα που μιλούσαν σε μεγάλο μέρος του τότε κόσμου."
+  },
+  {
+    cat: "Ελληνισμός & Χριστιανισμός",
+    q: "Τι σημαίνει ο όρος «σπερματικός λόγος» κατά τον Ιουστίνο;",
+    opts: [
+      "Η γεωργική φιλοσοφία",
+      "Σπέρματα (τμήματα) αλήθειας που αποκάλυψαν οι αρχαίοι φιλόσοφοι, προετοιμάζοντας για τον ερχομό του Χριστού",
+      "Η βιολογική θεωρία του Αριστοτέλη",
+      "Ο τρόπος σποράς στην αρχαία γεωργία"
+    ],
+    correct: 1,
+    explain: "Κατά τον Ιουστίνο, οι αρχαίοι σοφοί «αποκάλυψαν σπέρματα (δηλαδή τμήματα) της αλήθειας, γι' αυτό και ο λόγος τους ονομάστηκε σπερματικός λόγος». Αυτό προετοίμασε την ανθρωπότητα για τον Χριστό."
+  },
+  {
+    cat: "Ελληνισμός & Χριστιανισμός",
+    q: "Ποιοι ήταν οι Απολογητές;",
+    opts: [
+      "Αρχαίοι Έλληνες φιλόσοφοι",
+      "Χριστιανοί συγγραφείς με ελληνική παιδεία που υπεράσπισαν τη χριστιανική πίστη έναντι κατηγοριών",
+      "Ρωμαίοι δικαστές",
+      "Ιουδαίοι ιερείς"
+    ],
+    correct: 1,
+    explain: "Στα μέσα του 2ου αι. μ.Χ., συγγραφείς «με ελληνική παιδεία και φιλοσοφική κατάρτιση ανέλαβαν να υπερασπιστούν τη χριστιανική πίστη» απέναντι στις κατηγορίες (αθεΐα, εθνική προδοσία κ.ά.) που προκαλούσαν τους διωγμούς."
+  },
+  {
+    cat: "Ελληνισμός & Χριστιανισμός",
+    q: "Ο Ιουστίνος ο Απολογητής γεννήθηκε σε:",
+    opts: [
+      "Χριστιανική ελληνική οικογένεια",
+      "Ειδωλολατρική ελληνική οικογένεια στη Σαμάρεια",
+      "Ιουδαϊκή οικογένεια στα Ιεροσόλυμα",
+      "Ρωμαϊκή αριστοκρατική οικογένεια"
+    ],
+    correct: 1,
+    explain: "«Ο Ιουστίνος γεννήθηκε στη Σαμάρεια της Παλαιστίνης από ειδωλολατρική ελληνική οικογένεια.» Έγινε χριστιανός αργότερα στην Αίγυπτο."
+  },
+  {
+    cat: "Ελληνισμός & Χριστιανισμός",
+    q: "Σύμφωνα με τον Κλήμη Αλεξανδρέα, η φιλοσοφία:",
+    opts: [
+      "Είναι εχθρός της πίστης",
+      "Δεν χρειάζεται καθόλου στον χριστιανό",
+      "Προετοιμάζει για τη γαλήνη του Χριστού και γυμνάζει το πνεύμα",
+      "Αντικαθιστά πλήρως τη θρησκεία"
+    ],
+    correct: 2,
+    explain: "Ο Κλήμης γράφει: «Δεχόμαστε ότι η φιλοσοφία προετοιμάζει για τη γαλήνη του Χριστού, γυμνάζει το πνεύμα, ξυπνά τη νοημοσύνη.» Δεν αρνείται τη μάθηση — τη θεωρεί απαραίτητη."
+  },
+  // --- ΤΡΕΙΣ ΙΕΡΑΡΧΕΣ ---
+  {
+    cat: "Τρεις Ιεράρχες",
+    q: "Τι ήταν η Βασιλειάδα;",
+    opts: [
+      "Ένα αυτοκρατορικό ανάκτορο",
+      "Μια μικρή πόλη με νοσοκομείο, ορφανοτροφείο, ξενώνες, σχολεία — που έχτισε ο Μ. Βασίλειος έξω από την Καισάρεια",
+      "Η βιβλιοθήκη του Μ. Βασιλείου",
+      "Ένα μοναστήρι στην Αίγυπτο"
+    ],
+    correct: 1,
+    explain: "Η Βασιλειάδα ήταν ένα μεγαλεπήβολο κοινωνικό έργο: «μια μικρή πόλη με νοσοκομείο, ορφανοτροφείο, ξενώνες, σχολεία, εργαστήρια» που έχτισε ο Μ. Βασίλειος."
+  },
+  {
+    cat: "Τρεις Ιεράρχες",
+    q: "Πού σπούδασε ο Μέγας Βασίλειος φιλοσοφία, ρητορική και ιατρική;",
+    opts: ["Στην Αλεξάνδρεια", "Στην Αθήνα", "Στην Αντιόχεια", "Στα Ιεροσόλυμα"],
+    correct: 1,
+    explain: "«Στην Αθήνα ο Βασίλειος σπούδασε επί τέσσερα χρόνια φιλολογία, φιλοσοφία, νομικά, ρητορική, γεωμετρία, αριθμητική, αστρονομία, μουσική, ιατρική.»"
+  },
+  {
+    cat: "Τρεις Ιεράρχες",
+    q: "Σε ποιον ρητοροδιδάσκαλο μαθήτευσε ο Ιωάννης ο Χρυσόστομος;",
+    opts: ["Στον Πλάτωνα", "Στον Δημοσθένη", "Στον Λιβάνιο", "Στον Αριστοτέλη"],
+    correct: 2,
+    explain: "Ο Ιωάννης «μαθήτευσε κοντά στον φημισμένο εθνικό ρητοροδιδάσκαλο Λιβάνιο» στην Αντιόχεια. Ο Λιβάνιος ήταν εθνικός (όχι χριστιανός) ρήτορας."
+  },
+  {
+    cat: "Τρεις Ιεράρχες",
+    q: "Τα τελευταία λόγια του Ιωάννη Χρυσοστόμου ήταν:",
+    opts: [
+      "«Ελεήστε τους φτωχούς»",
+      "«Δόξα τω Θεώ πάντων ένεκεν»",
+      "«Συγχωρήστε τους εχθρούς μου»",
+      "«Αγαπάτε αλλήλους»"
+    ],
+    correct: 1,
+    explain: "Ο Χρυσόστομος πέθανε εξόριστος στα Κόμανα του Πόντου (407 μ.Χ.). Τα τελευταία του λόγια ήταν: «Δόξα τω Θεώ πάντων ένεκεν» — δοξάζοντας τον Θεό για τα πάντα, παρά τα βάσανά του."
+  },
+  {
+    cat: "Τρεις Ιεράρχες",
+    q: "Πότε καθιερώθηκε η γιορτή των Τριών Ιεραρχών ως ημέρα Παιδείας;",
+    opts: ["1821", "1842", "1900", "1750"],
+    correct: 1,
+    explain: "«Το 1842 το Πανεπιστήμιο Αθηνών καθιέρωσε για όλη την ελεύθερη Ελλάδα την εορτή των Τριών Ιεραρχών ως ημέρα αφιερωμένη στην Παιδεία και στα Γράμματα.»"
+  },
+];
+
+let currentQ = 0;
+let score = 0;
+let playerName = "";
+let answers = []; // track {qIndex, selected, correct}
+
+function startQuiz() {
+  playerName = document.getElementById("nameInput").value.trim() || "Μαθήτρια";
+  document.getElementById("nameScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  // Shuffle questions
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  currentQ = 0;
+  score = 0;
+  answers = [];
+  showQuestion();
+}
+
+function showQuestion() {
+  const total = questions.length;
+  const pct = (currentQ / total) * 100;
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressText").textContent = `Ερώτηση ${currentQ + 1} από ${total}`;
+
+  const q = questions[currentQ];
+  const letters = ["Α", "Β", "Γ", "Δ"];
+
+  let html = `<div class="question-card" id="qCard">
+    <div class="q-number">Ερώτηση ${currentQ + 1}</div>
+    <div class="q-category">${q.cat}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">`;
+
+  q.opts.forEach((opt, i) => {
+    html += `<button class="option-btn" onclick="selectAnswer(${i})" id="opt${i}">
+      <span class="letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`;
+  });
+
+  html += `</div><div id="feedback"></div></div>`;
+  document.getElementById("questionArea").innerHTML = html;
+}
+
+function selectAnswer(idx) {
+  const q = questions[currentQ];
+  const isCorrect = idx === q.correct;
+
+  if (isCorrect) score++;
+  answers.push({ qIndex: currentQ, selected: idx, correct: q.correct });
+
+  // Disable all options
+  q.opts.forEach((_, i) => {
+    const btn = document.getElementById("opt" + i);
+    btn.classList.add("disabled");
+    if (i === q.correct) btn.classList.add("correct");
+    if (i === idx && !isCorrect) btn.classList.add("wrong");
+  });
+
+  // Show explanation
+  const fb = document.getElementById("feedback");
+  fb.innerHTML = `
+    <div class="explanation ${isCorrect ? 'correct-exp' : 'wrong-exp'}">
+      <strong>${isCorrect ? '✅ Σωστά, ' + playerName + '!' : '❌ Λάθος...'}</strong>
+      ${q.explain}
+    </div>
+    <button class="next-btn" onclick="nextQuestion()">
+      ${currentQ < questions.length - 1 ? 'Επόμενη Ερώτηση →' : 'Δες τα Αποτελέσματα 🎉'}
+    </button>`;
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("progressBar").style.width = "100%";
+
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+
+  let gradeText, gradeColor, emoji, message;
+  if (pct >= 90) {
+    gradeText = "Άριστα!"; gradeColor = "#27ae60"; emoji = "🏆";
+    message = `${playerName}, τα πήγες εξαιρετικά! Φαίνεται ότι ξέρεις πολύ καλά την ύλη!`;
+  } else if (pct >= 75) {
+    gradeText = "Πολύ Καλά"; gradeColor = "#2980b9"; emoji = "🌟";
+    message = `Πολύ καλή δουλειά, ${playerName}! Λίγη ακόμα μελέτη και θα τα πας τέλεια!`;
+  } else if (pct >= 55) {
+    gradeText = "Καλά"; gradeColor = "#d4a024"; emoji = "📖";
+    message = `${playerName}, καλή προσπάθεια! Ξαναδιάβασε τις ενότητες που δυσκολεύτηκες.`;
+  } else {
+    gradeText = "Χρειάζεται μελέτη"; gradeColor = "#c0392b"; emoji = "💪";
+    message = `${playerName}, μη στενοχωριέσαι! Διάβασε ξανά τις ενότητες και ξαναδοκίμασε — θα βελτιωθείς!`;
+  }
+
+  let reviewHTML = '';
+  answers.forEach((a, i) => {
+    const q = questions[a.qIndex];
+    const wasCorrect = a.selected === a.correct;
+    reviewHTML += `<div class="review-item">
+      <div class="ri-q">${i+1}. ${q.q}</div>
+      <div class="ri-answer">
+        ${wasCorrect
+          ? `<span class="ri-correct">✓ ${q.opts[a.correct]}</span>`
+          : `<span class="ri-wrong">${q.opts[a.selected]}</span> → <span class="ri-correct">Σωστό: ${q.opts[a.correct]}</span>`
+        }
+      </div>
+    </div>`;
+  });
+
+  document.getElementById("resultsScreen").innerHTML = `
+    <div class="results">
+      <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+      <div class="score-circle">
+        <div class="score-num">${score}/${total}</div>
+        <div class="score-label">${pct}%</div>
+      </div>
+      <h2>${gradeText}</h2>
+      <div class="message">${message}</div>
+      <div class="review-section">
+        <h3>Ανασκόπηση Απαντήσεων</h3>
+        ${reviewHTML}
+      </div>
+      <button class="retry-btn" onclick="retry()">Ξαναπαίξε 🔄</button>
+    </div>`;
+
+  document.getElementById("resultsScreen").classList.remove("hidden");
+
+  if (pct >= 75) launchConfetti();
+}
+
+function retry() {
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  currentQ = 0;
+  score = 0;
+  answers = [];
+  showQuestion();
+}
+
+function launchConfetti() {
+  const colors = ['#d4a024','#6c3a8a','#2d8a4e','#c0392b','#2980b9','#f39c12'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.top = '-10px';
+    el.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(el);
+    const dur = 1500 + Math.random()*2000;
+    el.animate([
+      { top: '-10px', opacity: 1 },
+      { top: '110vh', opacity: 0 }
+    ], { duration: dur, delay: Math.random()*500, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)' })
+    .onfinish = () => el.remove();
+  }
+}
+
+// Enter key starts quiz
+document.getElementById("nameInput").addEventListener("keypress", e => {
+  if (e.key === "Enter") startQuiz();
+});
+</script>
+</body>
+</html>
